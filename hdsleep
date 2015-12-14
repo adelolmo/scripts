@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# $1 /dev/sda
-# $2 (standby|sleep)
+# apt-get install sysstat
 LOCK_FILE=/tmp/hdsleep.lock
 
 usage(){
@@ -31,11 +30,11 @@ if [ $cpu -eq 0 ]; then
     case $2 in
         standby)
             logger "Bring $1 to $2 mode."
-            #hdparm -y $1
+            hdparm -y $1
             ;;    
         sleep)
             logger "Bring $1 to $2 mode."
-            #hdparm -Y $1
+            hdparm -Y $1
             ;;
         *)
             echo "Missing hdd stop mode."
