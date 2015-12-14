@@ -1,6 +1,9 @@
 #!/bin/bash
 
-# apt-get install sysstat
+###########################
+# Dependencies: sysstat
+###########################
+
 LOCK_FILE=/tmp/hdsleep.lock
 
 usage(){
@@ -10,23 +13,24 @@ usage(){
 	exit 1
 }
 
+if [ $# -ne 2 ]; then
+        usage
+fi
 if [ ! -e $1 ]; then
 	usage
 fi
-if [ -z $2 ]; then
-	usage
-fi
 
-# get hd activity
+# get hdd activity
 iostat -x $1 5 2 > /tmp/iostat.log
 cpu=$(sed '13!d' /tmp/iostat.log | cut -c118)
+rm -f /tmp/iostat.log
 
 if [ $cpu -eq 0 ]; then
     # exit if lock file found
     if [ -e $LOCK_FILE ]; then exit 0; fi
 
-    logger "Current cpu activity for $1: $cpu"
-    # hd into sleep
+    logger "No activity in hdd $1."
+    # hdd into sleep
     case $2 in
         standby)
             logger "Bring $1 to $2 mode."
@@ -43,6 +47,6 @@ if [ $cpu -eq 0 ]; then
     esac    
     echo $(date) > $LOCK_FILE
 else
-    logger "Current cpu activity for $1: $cpu"
+    logger "Current cpu activity in hdd $1: $cpu"
     rm -f $LOCK_FILE
 fi
