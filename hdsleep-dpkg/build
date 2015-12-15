@@ -1,0 +1,3 @@
+#!/bin/bash
+echo Building...
+dpkg -b package/ hdsleep_1.0.0_amd64.deb

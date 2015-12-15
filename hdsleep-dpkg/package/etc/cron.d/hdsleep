@@ -1,0 +1,2 @@
+# Run hdsleep every minute
+* * * * * root /usr/bin/hdsleep/hdsleep
