@@ -3,12 +3,17 @@
 TMP=/tmp/dpkg-hdsleep
 echo Building...
 
-rm -Rf $TMP
-mkdir -p $TMP/release
-cp -R package/* $TMP
-chown root:root -R $TMP
-dpkg -b $TMP $TMP/release/hdsleep_1.0.0_amd64.deb
-dpkg -b $TMP $TMP/release/hdsleep_1.0.0_i386.deb
+setup(){
+	rm -Rf $TMP
+	mkdir -p /tmp/release
+	mkdir -p $TMP
+	cp -R package/* $TMP
+	chown root:root -R $TMP
+}
 
+setup
+dpkg -b $TMP /tmp/release/hdsleep_1.0.0_amd64.deb
+setup
+dpkg -b $TMP /tmp/release/hdsleep_1.0.0_i386.deb
 
 echo done
