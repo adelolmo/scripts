@@ -1,0 +1,4 @@
+#!/bin/bash
+usage1=$(iostat -x /dev/sda 5 2 | sed '13!d' | cut -c118)
+usage2=$(iostat -x /dev/sda 5 2 | sed '13!d' | cut -c118)
+echo "$(($usage1 + $usage2))"

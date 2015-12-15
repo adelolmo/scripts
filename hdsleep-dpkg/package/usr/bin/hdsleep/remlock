@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#logger running
+if [ "$(/root/hdusage)" -gt 0 ]; then
+	if [ -e /tmp/hdsleep.lock ]; then
+		logger remove hdsleep.lock
+		rm -f /tmp/hdsleep.lock
+	fi
+fi

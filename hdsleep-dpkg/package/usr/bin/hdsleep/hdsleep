@@ -1,10 +1,17 @@
 #!/bin/bash
 
-###########################
-# Dependencies: sysstat
-###########################
-
 LOCK_FILE=/tmp/hdsleep.lock
+CONFIG_FILE=/etc/hdsleep/config.cfg
+
+. $CONFIG_FILE
+
+if [ -z $disk ]; then
+	echo "Missing disk configuration. Edit $CONFIG_FILE with the necessary disk value."
+	exit 1
+fi
+if [ -z $mode ]; then
+	mode="standby"
+fi
 
 usage(){
 	echo Sends command to the given hdd to go to standby or sleep mode.
@@ -13,15 +20,12 @@ usage(){
 	exit 1
 }
 
-if [ $# -ne 2 ]; then
-        usage
-fi
-if [ ! -e $1 ]; then
+if [ ! -e $disk ]; then
 	usage
 fi
 
 # get hdd activity
-iostat -x $1 5 2 > /tmp/iostat.log
+iostat -x $disk 5 2 > /tmp/iostat.log
 cpu=$(sed '13!d' /tmp/iostat.log | cut -c118)
 rm -f /tmp/iostat.log
 
@@ -29,16 +33,16 @@ if [ $cpu -eq 0 ]; then
     # exit if lock file found
     if [ -e $LOCK_FILE ]; then exit 0; fi
 
-    logger "No activity in hdd $1."
-    # hdd into sleep
-    case $2 in
+    logger "No activity in hdd $disk."
+    
+    case $mode in
         standby)
-            logger "Bring $1 to $2 mode."
-            hdparm -y $1
+            logger "Bring $disk to $mode mode."
+            hdparm -y $disk
             ;;    
         sleep)
-            logger "Bring $1 to $2 mode."
-            hdparm -Y $1
+            logger "Bring $disk to $mode mode."
+            hdparm -Y $disk
             ;;
         *)
             echo "Missing hdd stop mode."
@@ -47,6 +51,6 @@ if [ $cpu -eq 0 ]; then
     esac    
     echo $(date) > $LOCK_FILE
 else
-    logger "Current cpu activity in hdd $1: $cpu"
+    logger "Current cpu activity in hdd $disk: $cpu"
     rm -f $LOCK_FILE
 fi
