@@ -1,9 +1,10 @@
 #!/bin/bash
 
-#logger running
+LOCK_FILE=/tmp/hdsleep.lock
+
 if [ "$(/usr/bin/hdsleep/hdusage)" -gt 0 ]; then
-	if [ -e /tmp/hdsleep.lock ]; then
-		logger remove hdsleep.lock
-		rm -f /tmp/hdsleep.lock
+	if [ -e $LOCK_FILE ]; then
+		logger "[hdsleep] remove hdsleep.lock"
+		rm -f $LOCK_FILE
 	fi
 fi

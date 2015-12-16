@@ -31,7 +31,7 @@ if [ $cpu -eq 0 ]; then
     # exit if lock file found
     if [ -e $LOCK_FILE ]; then exit 0; fi
 
-    logger "No activity in hdd $disk."
+    logger "[hdsleep] No activity in hdd $disk."
     
     case $mode in
         standby)
@@ -49,6 +49,6 @@ if [ $cpu -eq 0 ]; then
     esac    
     echo $(date) > $LOCK_FILE
 else
-    logger "Current cpu activity in hdd $disk: $cpu"
+    logger "[hdsleep] Current cpu activity in hdd $disk: $cpu"
     rm -f $LOCK_FILE
 fi
