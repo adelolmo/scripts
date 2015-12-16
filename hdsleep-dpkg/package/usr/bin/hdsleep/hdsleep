@@ -35,11 +35,11 @@ if [ $cpu -eq 0 ]; then
     
     case $mode in
         standby)
-            logger "Bring $disk to $mode mode."
+            logger "[hdsleep] Bring $disk to $mode mode."
             hdparm -y $disk
             ;;    
         sleep)
-            logger "Bring $disk to $mode mode."
+            logger "[hdsleep] Bring $disk to $mode mode."
             hdparm -Y $disk
             ;;
         *)
