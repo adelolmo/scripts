@@ -2,6 +2,7 @@
 
 TMP=/tmp/dpkg-hdsleep
 version=`cat VERSION`
+size=$(du -csh package/ | sed '1!d' | grep -oe "^[0-9]*")
 
 echo "Building version $version..."
 
@@ -12,7 +13,7 @@ setup(){
 	mkdir -p /tmp/release
 	mkdir -p $TMP
 	cp -R package/* $TMP
-	sed 's/\[\[version\]\]/'${version}'/g' package/DEBIAN/control > $TMP/DEBIAN/control
+	sed 's/\[\[version\]\]/'${version}'/g;s/\[\[size\]\]/'${size}'/g' package/DEBIAN/control > $TMP/DEBIAN/control
 	chown root:root -R $TMP
 }
 
