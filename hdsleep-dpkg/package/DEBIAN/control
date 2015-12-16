@@ -1,5 +1,5 @@
 Package: hdsleep
-Version: 1.0.0
+Version: [[version]]
 Section: unknown
 Priority: standard
 Architecture: all
