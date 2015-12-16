@@ -1,8 +1,6 @@
 #!/bin/bash
 
-LOCK_FILE=/tmp/hdsleep.lock
-CONFIG_FILE=/etc/hdsleep/config.cfg
-
+. /usr/bin/hdsleep/constants
 . $CONFIG_FILE
 
 if [ -z $disk ]; then
@@ -14,7 +12,7 @@ if [ -z $mode ]; then
 fi
 
 usage(){
-	echo Sends command to the given hdd to go to standby or sleep mode.
+	echo "Sends command to the given hdd to go to standby or sleep mode."
 	echo
 	echo "Usage: $(basename $0) hdd (standby|sleep)"
 	exit 1
@@ -24,6 +22,7 @@ if [ ! -e $disk ]; then
 	usage
 fi
 
+mkdir -p $TMP
 # get hdd activity
 cpu=$(/usr/bin/hdsleep/hdusage)
 
@@ -32,21 +31,31 @@ if [ $cpu -eq 0 ]; then
     if [ -e $LOCK_FILE ]; then exit 0; fi
 
     logger "[hdsleep] No activity in hdd $disk."
-    
+
+    # exit if ready_to_sleep file is not found    
+    if [ ! -e $READY_TO_SLEEP_FILE ]; then 
+        echo $(date) > $READY_TO_SLEEP_FILE
+        logger "[hdsleep] Create $READY_TO_SLEEP_FILE."
+        exit 0
+    fi
+
+    rm -f $READY_TO_SLEEP_FILE
+
     case $mode in
         standby)
-            logger "[hdsleep] Bring $disk to $mode mode."
-            hdparm -y $disk
+            eval "hdparm -y $disk"
+            logger "[hdsleep] Bring $disk to $mode mode."            
             ;;    
         sleep)
-            logger "[hdsleep] Bring $disk to $mode mode."
-            hdparm -Y $disk
+            eval "hdparm -Y $disk"
+            logger "[hdsleep] Bring $disk to $mode mode."            
             ;;
         *)
             echo "Missing hdd stop mode."
             exit 1
             ;;
-    esac    
+    esac
+
     echo $(date) > $LOCK_FILE
 else
     logger "[hdsleep] Current cpu activity in hdd $disk: $cpu"

@@ -1,8 +1,6 @@
 #!/bin/bash
 
-LOCK_FILE=/tmp/hdsleep.lock
-CONFIG_FILE=/etc/hdsleep/config.cfg
-
+. /usr/bin/hdsleep/constants
 . $CONFIG_FILE
 
 if [ -z $disk ]; then

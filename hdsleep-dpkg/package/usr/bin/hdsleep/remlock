@@ -1,10 +1,21 @@
 #!/bin/bash
 
-LOCK_FILE=/tmp/hdsleep.lock
+. /usr/bin/hdsleep/constants
+. $CONFIG_FILE
 
-if [ "$(/usr/bin/hdsleep/hdusage)" -gt 0 ]; then
+remove(){
+	logger "[hdsleep] remove hdsleep.lock"
+	rm -f $LOCK_FILE
+	exit 0
+}
+
+state=$(hdparm -C $disk | sed '3!d' | grep -oE "(active|standby)")
+if [ "$state" == "active" ]; then
+	remove
+fi
+
+if [ "$(/usr/bin/hdsleep/hdusage)" -gt 0 ]; then	
 	if [ -e $LOCK_FILE ]; then
-		logger "[hdsleep] remove hdsleep.lock"
-		rm -f $LOCK_FILE
+		remove
 	fi
 fi
