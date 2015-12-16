@@ -25,9 +25,7 @@ if [ ! -e $disk ]; then
 fi
 
 # get hdd activity
-iostat -x $disk 5 2 > /tmp/iostat.log
-cpu=$(sed '13!d' /tmp/iostat.log | cut -c118)
-rm -f /tmp/iostat.log
+cpu=$(/usr/bin/hdsleep/hdusage)
 
 if [ $cpu -eq 0 ]; then
     # exit if lock file found
