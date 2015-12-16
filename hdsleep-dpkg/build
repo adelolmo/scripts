@@ -18,8 +18,6 @@ setup(){
 }
 
 setup
-dpkg -b $TMP /tmp/release/hdsleep_$version.deb
-#setup
-#dpkg -b $TMP /tmp/release/hdsleep_1.0.0_i386.deb
+dpkg-deb -b -z9 $TMP /tmp/release
 
 echo done
