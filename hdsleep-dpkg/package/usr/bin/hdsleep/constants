@@ -1,0 +1,4 @@
+TMP=/tmp/hdsleep
+LOCK_FILE=/tmp/hdsleep/hdsleep.lock
+CONFIG_FILE=/etc/hdsleep/config.cfg
+READY_TO_SLEEP_FILE=/tmp/hdsleep/ready_to_sleep
