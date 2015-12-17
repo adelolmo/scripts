@@ -9,7 +9,7 @@ remove(){
 	exit 0
 }
 
-state=$(hdparm -C $disk | sed '3!d' | grep -oE "(active|standby)")
+state=$(/sbin/hdparm -C $disk | sed '3!d' | grep -oE "(active|standby)")
 if [ "$state" == "active" ]; then
 	remove
 fi

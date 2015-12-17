@@ -43,11 +43,11 @@ if [ $cpu -eq 0 ]; then
 
     case $mode in
         standby)
-            eval "hdparm -y $disk"
+            eval "/sbin/hdparm -y $disk"
             logger "[hdsleep] Bring $disk to $mode mode."            
             ;;    
         sleep)
-            eval "hdparm -Y $disk"
+            eval "/sbin/hdparm -Y $disk"
             logger "[hdsleep] Bring $disk to $mode mode."            
             ;;
         *)
