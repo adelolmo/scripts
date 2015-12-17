@@ -4,9 +4,11 @@
 . $CONFIG_FILE
 
 remove(){
-	logger "[hdsleep] remove hdsleep.lock"
-	rm -f $LOCK_FILE
-	exit 0
+	if [ -e $LOCK_FILE ]; then
+		logger "[hdsleep] remove hdsleep.lock"
+		rm -f $LOCK_FILE
+		exit 0
+	fi
 }
 
 state=$(/sbin/hdparm -C $disk | sed '3!d' | grep -oE "(active|standby)")
@@ -14,8 +16,6 @@ if [ "$state" == "active" ]; then
 	remove
 fi
 
-if [ "$(/usr/bin/hdsleep/hdusage)" -gt 0 ]; then	
-	if [ -e $LOCK_FILE ]; then
-		remove
-	fi
+if [ "$(/usr/bin/hdsleep/hdusage)" -gt 0 ]; then		
+	remove
 fi
