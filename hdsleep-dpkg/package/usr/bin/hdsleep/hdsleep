@@ -60,4 +60,5 @@ if [ $cpu -eq 0 ]; then
 else
     logger "[hdsleep] Current cpu activity in hdd $disk: $cpu"
     rm -f $LOCK_FILE
+    rm -f $READY_TO_SLEEP_FILE
 fi
