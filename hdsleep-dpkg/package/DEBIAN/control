@@ -1,6 +1,6 @@
 Package: hdsleep
 Version: [[version]]
-Section: unknown
+Section: tasks
 Priority: standard
 Architecture: all
 Depends: sysstat
