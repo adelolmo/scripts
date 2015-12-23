@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Make sure only root can run our script
+if [ "$(id -u)" != "0" ]; then
+   echo "This script must be run as root." 1>&2
+   exit 1
+fi
+
+# Install dependencies
+apt-get install reprepro -y
+apt-get install apache2 -y
+
+# Prepare directory structure
+mkdir -p /var/www/html/apt/conf
+mkdir -p /var/www/html/apt/incoming
+
+# Repository config template
+cat > /var/www/html/apt/conf/distributions <<EOF
+Origin: Your Name
+Label: Your own label
+Suite: stable
+Codename: trusty
+Version: 3.1
+Architectures: i386 all source
+Components: main non-free contrib
+Description: Your description
+
+Origin: Your Name
+Label: Your own label
+Suite: unstable
+Codename: sid
+Architectures: i386 all source
+Components: main non-free contrib
+Description: Your description
+EOF
+
+echo "export REPREPRO_BASE_DIR=/var/www/html/apt" >> /etc/environment
+. /etc/environment
+
+echo done
