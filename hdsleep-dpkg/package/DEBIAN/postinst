@@ -1,0 +1,8 @@
+#!/bin/bash
+
+. /usr/bin/hdsleep/constants
+. $CONFIG_FILE
+
+echo
+echo "Creating config file $CONFIG_FILE"
+echo

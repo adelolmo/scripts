@@ -1,0 +1,89 @@
+#!/bin/bash
+
+# needed if executed  with 'service mysql ...'
+export HOME="/home/adelolmo"
+
+COMMAND="$1"
+MYSQL_SANDBOX_HOME="/home/adelolmo/sandboxes"
+ACTIVE_INSTANCE=`cat $MYSQL_SANDBOX_HOME/active_instance`
+MYSQL_INSTANCE=$MYSQL_SANDBOX_HOME/$ACTIVE_INSTANCE
+
+#delare -a DIRS
+i=0
+
+#echo "active instance: $ACTIVE_INSTANCE"
+#echo "active mysql instance: $MYSQL_INSTANCE"
+
+case $COMMAND in
+start)
+	echo
+	echo "Starting MySQL $ACTIVE_INSTANCE instance ..."
+	exec $MYSQL_INSTANCE/start
+	;;
+stop)
+	echo
+	echo "Stoping MySQL $ACTIVE_INSTANCE instance ..."
+	exec $MYSQL_INSTANCE/stop
+	;;
+restart)
+	echo
+	echo "Restarting MySQL $ACTIVE_INSTANCE instance ..."
+	exec $MYSQL_INSTANCE/restart
+	;;
+status)
+        echo
+        echo "Active MySQL intance: $ACTIVE_INSTANCE"	
+	echo
+	#echo "Status of MySQL instances:"
+	echo "  Instance     Status"
+	echo "--------------------------"
+        for dir in $(find $MYSQL_SANDBOX_HOME -maxdepth 1 -type d -name "msb*" |grep -oE "[a-z0-9\\_\\-]+$" | sort)
+        do
+		PIDFILE="/tmp/$dir.pid"
+		#echo "PIDFILE=$PIDFILE"
+		if [ -f $PIDFILE ]; then
+			echo "  `echo $dir|grep -oE "[a-z0-9]+$"`	       started"
+		else
+			echo "  `echo $dir|grep -oE "[a-z0-9]+$"`          off"
+		fi
+	done
+	;;
+set)
+	echo
+	echo "  Selection	Instance	Status"
+	echo "---------------------------------------------"
+	for dir in $(find $MYSQL_SANDBOX_HOME -maxdepth 1 -type d -name "msb*" |grep -oE "[a-z0-9\\_\\-]+$" | sort)
+	do
+		DIRS[i]=$dir
+		i=$((i+1))
+		if [ -f "/tmp/$dir.pid" ];then
+			STATUS="started"
+		else
+			STATUS="off"
+		fi
+		if [ "$dir" == "$ACTIVE_INSTANCE" ]; then
+			echo "* $i		`echo $dir|grep -oE "[a-z0-9]+$"` 		$STATUS"
+		else
+			echo "  $i 		`echo $dir|grep -oE "[a-z0-9]+$"`		$STATUS"
+		fi
+	done
+	read -p "Press enter to keep the current choice[*], or type selection number: " instance
+#	echo "instance: $instance   number instances: ${#DIRS[@]}"
+	if [ -z $instance ];then
+		exit 0
+	elif [ $((instance)) -gt ${#DIRS[@]} ];then
+		echo "Incorrect instance!"
+	else
+		#echo ${DIRS[$instance-1]} > /tmp/active_instance
+		echo ${DIRS[$instance-1]} > $MYSQL_SANDBOX_HOME/active_instance
+	fi
+	
+#	echo "${DIRS[0]}, ${DIRS[1]}"
+	;;
+*)
+	echo
+	echo "Usage: $0 (start|stop|restart|status|set)"
+	exit 1
+esac
+
+exit 0

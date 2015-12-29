@@ -1,0 +1,31 @@
+#!/bin/bash
+
+LOG_FILE=$1
+INITIAL_TIME=$2
+FINAL_TIME=$3
+
+usage(){
+	echo "Usage: $0 log_file initial_period_time final_period_time"
+}
+
+run(){
+	first_line_number=`grep -n "${INITIAL_TIME}" "${LOG_FILE}"|sed -n "1p"|grep -oE "(^[0-9]+)"`
+	last_line_number=`grep -n "${FINAL_TIME}" "${LOG_FILE}"|sed -n "1p"|grep -oE "(^[0-9]+)"`
+
+	#echo First line: $first_line_number
+	#echo Last line: $last_line_number
+
+	sed -n "${first_line_number}","${last_line_number}"p $LOG_FILE|less
+}
+
+#echo LOG_FILE=$LOG_FILE
+#echo INITIAL_TIME=$INITIAL_TIME
+#echo FINAL_TIME=$FINAL_TIME
+
+if [[ -n "$LOG_FILE" && -n "$INITIAL_TIME" && -n "$FINAL_TIME" ]]
+then
+	run
+else	
+	usage
+	exit 1
+fi

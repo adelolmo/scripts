@@ -1,0 +1,46 @@
+#!/bin/sh
+
+DEFAULT_SCREEN="1"
+
+usage(){
+        echo "Usage: $0 {start|stop} [screen_number]"
+}
+
+run(){
+	case $1 in
+	start)
+		if [ -f $PIDFILE ]; then
+			echo "Xvfb screen $2 is already started";
+			exit 2;
+		fi
+		echo "Start Xvfb screen $2..."
+		Xvfb :$2 -auth /etc/xauth.xvfb -fbdir /tmp -screen 0 1024x768x24 -extension RANDR 2>/tmp/xvfb.log &
+		echo $! > $PIDFILE
+		;;
+	stop)		
+		if [ -f $PIDFILE ]; then			
+			echo "Stop Xvfb screen $2..."
+			#echo "kill process `cat $PIDFILE`"
+			kill `cat $PIDFILE`
+			rm $PIDFILE
+		else 
+			echo "Xvfb screen $2 is not running"
+		fi
+		;;
+	*)
+		usage
+	esac
+}
+
+if [ -n $1 ]; then
+	if [ -z "$2" ]; then
+		PIDFILE="/tmp/xvfb-$DEFAULT_SCREEN.pid"
+		run $1 $DEFAULT_SCREEN
+	else
+		PIDFILE="/tmp/xvfb-$2.pid"
+		run $1 $2
+	fi
+else
+	usage
+	exit 1
+fi

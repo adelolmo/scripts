@@ -3,19 +3,19 @@
 . /usr/bin/hdsleep/constants
 . $CONFIG_FILE
 
-remove(){
-	if [ -e $LOCK_FILE ]; then
-		logger "[hdsleep] remove hdsleep.lock"
-		rm -f $LOCK_FILE
-		exit 0
-	fi
+remove(){	
+	logger "[hdsleep] remove hdsleep.lock"
+	rm -f $LOCK_FILE
+	exit 0
 }
 
-state=$(/sbin/hdparm -C $disk | sed '3!d' | grep -oE "(active|standby)")
-if [ "$state" == "active" ]; then
-	remove
-fi
+if [ -e $LOCK_FILE ]; then
+	state=$(/sbin/hdparm -C $disk | sed '3!d' | grep -oE "(active|standby)")
+	if [ "$state" == "active" ]; then
+		remove
+	fi
 
-if [ "$(/usr/bin/hdsleep/hdusage)" -gt 0 ]; then		
-	remove
+	if [ "$(/usr/bin/hdsleep/hdusage)" -gt 0 ]; then		
+		remove
+	fi
 fi
