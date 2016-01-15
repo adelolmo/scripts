@@ -1,0 +1,32 @@
+#!/bin/bash
+
+set -e
+
+# sudo reprepro -Vb /var/www/html/apt --component=contrib includedeb trusty /tmp/deb/contrib/dp_1.0_all.deb
+
+function usage(){
+    echo "Usage: $(basename $0) distribution package"
+    exit 1
+}
+
+# Make sure only root can run our script
+#if [ "$(id -u)" != "0" ]; then
+#   echo "This script must be run as root." 1>&2
+#   exit 1
+#fi
+
+if [[ -z $1 ]]; then
+	usage
+	exit 1
+fi
+if [ -z $REPREPRO_BASE_DIR ]; then
+	echo Missing REPREPRO_BASE_DIR env variable.
+	exit 1
+fi
+if [ -z $REPREPRO_BASE_BACKUP_DIR ]; then
+        echo Missing REPREPRO_BASE_BACKUP_DIR env variable.
+	exit 1
+fi
+
+reprepro -b $REPREPRO_BASE_DIR includedeb $@
+reprepro -b $REPREPRO_BASE_BACKUP_DIR includedeb $@
