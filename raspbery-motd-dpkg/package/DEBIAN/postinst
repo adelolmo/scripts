@@ -1,7 +1,9 @@
 #!/bin/bash
 
+set -e
+
 # remove MOTD file
-rm /etc/motd
+rm -f /etc/motd
 
 # symlink dynamic MOTD file
 ln -s /var/run/motd /etc/motd
