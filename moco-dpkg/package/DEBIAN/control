@@ -1,0 +1,9 @@
+Package: moco
+Version: [[version]]
+Section: java
+Priority: standard
+Architecture: all
+Depends: java
+Maintainer: Andoni del Olmo <andoni.delolmo@gmail.com>
+Installed-Size: [[size]]
+Description: Mock web server.
