@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Ensure this file is executable via `chmod a+x moco`, then place it
 # somewhere on your $PATH, like ~/bin. The rest of moco will be
@@ -11,7 +11,6 @@ if [ `id -u` -eq 0 ] && [ "$MOCO_ROOT" = "" ]; then
     read _
 fi
 
-#export MOCO_HOME="${MOCO_HOME:-"$HOME/.moco"}"
 export MOCO_HOME=/etc/moco
 VERSION_LOG_FILE="$MOCO_HOME/.version"
 
@@ -58,7 +57,7 @@ if [ "$HTTP_CLIENT" = "" ]; then
     fi
 fi
 
-function download_failed_message {
+download_failed_message(){
     echo "Failed to download $1"
     echo "It's possible your HTTP client's certificate store does not have the"
     echo "correct certificate authority needed. This is often caused by an"
@@ -70,7 +69,7 @@ function download_failed_message {
     echo "set HTTP_PROXY and HTTPS_PROXY."
 }
 
-function download {
+download(){
     $HTTP_CLIENT "$2.pending" "$1"
     if [ $? == 0 ]; then
         # TODO: checksum
@@ -82,11 +81,11 @@ function download {
     fi
 }
 
-function parse_tag {
+parse_tag(){
    tag_value=`grep "<$2>.*<.$2>" $1 | sed -e "s/^.*<$2/<$2/" | cut -f2 -d">"| cut -f1 -d"<"`
 }
 
-function parse_maven_metadata {
+parse_maven_metadata() {
     MOCO_METADATA_URL="http://repo1.maven.org/maven2/com/github/dreamhead/moco-runner/maven-metadata.xml"
     MOCO_METADATA="/tmp/maven-metadata.xml"
     download $MOCO_METADATA_URL $MOCO_METADATA
@@ -94,14 +93,14 @@ function parse_maven_metadata {
     LATEST_VERSION=$tag_value
 }
 
-function parse_standalone_latest_url {
+parse_standalone_latest_url() {
     parse_maven_metadata
     VERSION=${LATEST_VERSION%}
     LATEST_MOCO_STANDALONE_JAR="moco-runner-$VERSION-standalone.jar"
     MOCO_STANDLONE_URL="http://repo1.maven.org/maven2/com/github/dreamhead/moco-runner/$LATEST_VERSION/$LATEST_MOCO_STANDALONE_JAR"
 }
 
-function install {
+install() {
     echo "Install moco"
     echo "Parse the latest version of moco"
     parse_standalone_latest_url
@@ -111,14 +110,14 @@ function install {
     download $MOCO_STANDLONE_URL $MOCO_STANDALONE
 }
 
-function load_current_version {
+load_current_version() {
     read MOCO_STANDALONE CURRENT_VERSION < $VERSION_LOG_FILE
     if [[ "$(uname)" -ne "Darwin" && "$(expr substr $(uname -s) 2 6)" == "CYGWIN"   ]];then
         MOCO_STANDALONE=`cygpath -m "$MOCO_STANDALONE"`
     fi
 }
 
-function usage {
+usage() {
   printf "
 options:
        help      show help

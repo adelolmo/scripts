@@ -2,8 +2,8 @@ Package: moco
 Version: [[version]]
 Section: java
 Priority: standard
-Architecture: all
-Depends: java
+Architecture: amd64
+Depends: oracle-java8-jre
 Maintainer: Andoni del Olmo <andoni.delolmo@gmail.com>
 Installed-Size: [[size]]
 Description: Mock web server.
