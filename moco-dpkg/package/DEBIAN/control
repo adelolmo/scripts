@@ -2,8 +2,8 @@ Package: moco
 Version: [[version]]
 Section: java
 Priority: standard
-Architecture: amd64
+Architecture: all
 Depends: oracle-java8-jre
 Maintainer: Andoni del Olmo <andoni.delolmo@gmail.com>
 Installed-Size: [[size]]
-Description: Mock web server.
+Description: Moco is an easy setup stub framework.
