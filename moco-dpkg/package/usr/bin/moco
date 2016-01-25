@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# https://raw.githubusercontent.com/dreamhead/moco/master/moco-shell/moco
+
 # Ensure this file is executable via `chmod a+x moco`, then place it
 # somewhere on your $PATH, like ~/bin. The rest of moco will be
 # installed upon first run into the ~/.moco directory.
@@ -12,7 +14,6 @@ if [ `id -u` -eq 0 ] && [ "$MOCO_ROOT" = "" ]; then
 fi
 
 export MOCO_HOME=/etc/moco
-VERSION_LOG_FILE="$MOCO_HOME/.version"
 
 die() {
     [[ $1 ]] || {
@@ -57,59 +58,6 @@ if [ "$HTTP_CLIENT" = "" ]; then
     fi
 fi
 
-download_failed_message(){
-    echo "Failed to download $1"
-    echo "It's possible your HTTP client's certificate store does not have the"
-    echo "correct certificate authority needed. This is often caused by an"
-    echo "out-of-date version of libssl. Either upgrade it or set HTTP_CLIENT"
-    echo "to turn off certificate checks:"
-    echo "  export HTTP_CLIENT=\"wget --no-check-certificate -O\" # or"
-    echo "  export HTTP_CLIENT=\"curl --insecure -f -L -o\""
-    echo "It's also possible that you're behind a firewall haven't yet"
-    echo "set HTTP_PROXY and HTTPS_PROXY."
-}
-
-download(){
-    $HTTP_CLIENT "$2.pending" "$1"
-    if [ $? == 0 ]; then
-        # TODO: checksum
-        mv -f "$2.pending" "$2"
-    else
-        rm "$2.pending" 2> /dev/null
-        download_failed_message "$1"
-        exit 1
-    fi
-}
-
-parse_tag(){
-   tag_value=`grep "<$2>.*<.$2>" $1 | sed -e "s/^.*<$2/<$2/" | cut -f2 -d">"| cut -f1 -d"<"`
-}
-
-parse_maven_metadata() {
-    MOCO_METADATA_URL="http://repo1.maven.org/maven2/com/github/dreamhead/moco-runner/maven-metadata.xml"
-    MOCO_METADATA="/tmp/maven-metadata.xml"
-    download $MOCO_METADATA_URL $MOCO_METADATA
-    parse_tag $MOCO_METADATA latest
-    LATEST_VERSION=$tag_value
-}
-
-parse_standalone_latest_url() {
-    parse_maven_metadata
-    VERSION=${LATEST_VERSION%}
-    LATEST_MOCO_STANDALONE_JAR="moco-runner-$VERSION-standalone.jar"
-    MOCO_STANDLONE_URL="http://repo1.maven.org/maven2/com/github/dreamhead/moco-runner/$LATEST_VERSION/$LATEST_MOCO_STANDALONE_JAR"
-}
-
-install() {
-    echo "Install moco"
-    echo "Parse the latest version of moco"
-    parse_standalone_latest_url
-    echo "Download the latest moco: $LATEST_VERSION"
-    MOCO_STANDALONE="$MOCO_HOME/$LATEST_MOCO_STANDALONE_JAR"
-    echo "$MOCO_STANDALONE $LATEST_VERSION" >> $VERSION_LOG_FILE
-    download $MOCO_STANDLONE_URL $MOCO_STANDALONE
-}
-
 load_current_version() {
     MOCO_STANDALONE=/etc/moco/moco-runner-0.10.2-standalone.jar
     if [[ "$(uname)" -ne "Darwin" && "$(expr substr $(uname -s) 2 6)" == "CYGWIN"   ]];then
@@ -126,12 +74,6 @@ options:
        upgrade   upgrade moco
 "
 }
-
-if [ ! -e "$MOCO_HOME" ]
-then
-    mkdir "$MOCO_HOME"
-    install
-fi
 
 if [ "$1" = "start" ]; then
     echo "Starting..."
@@ -153,18 +95,6 @@ elif [ "$1" = "shutdown" ]; then
     echo "Shutting down server..."
     load_current_version
     exec "$JAVACMD" -jar "$MOCO_STANDALONE" $*
-elif [ "$1" = "upgrade" ]; then
-    echo "Check the new version"
-    parse_maven_metadata
-    load_current_version
-
-    if [ "$LATEST_VERSION" = "$CURRENT_VERSION" ]; then
-        echo "The current version of moco is the latest"
-    else
-        echo "Upgrading..."
-        rm $VERSION_LOG_FILE
-        install
-    fi
 elif [ "$1" = "version" ]; then
     load_current_version
     echo "Moco version: $CURRENT_VERSION"
