@@ -14,6 +14,7 @@ if [ `id -u` -eq 0 ] && [ "$MOCO_ROOT" = "" ]; then
 fi
 
 export MOCO_HOME=/etc/moco
+MOCO_STANDALONE=$MOCO_HOME/moco-runner-0.10.2-standalone.jar
 
 die() {
     [[ $1 ]] || {
@@ -58,9 +59,8 @@ if [ "$HTTP_CLIENT" = "" ]; then
     fi
 fi
 
-load_current_version() {
-    MOCO_STANDALONE=/etc/moco/moco-runner-0.10.2-standalone.jar
-    if [[ "$(uname)" -ne "Darwin" && "$(expr substr $(uname -s) 2 6)" == "CYGWIN"   ]];then
+load_current_version() {    
+    if [[ "$(uname)" -ne "Darwin" && "$(expr substr $(uname -s) 2 6)" == "CYGWIN"   ]]; then
         MOCO_STANDALONE=`cygpath -m "$MOCO_STANDALONE"`
     fi
 }
