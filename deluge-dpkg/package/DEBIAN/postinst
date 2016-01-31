@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# http://dev.deluge-torrent.org/wiki/UserGuide/Service/systemd
+adduser --system --gecos "Deluge Service" --disabled-password --group --home /home/deluge deluge
+#adduser --system  --gecos "Deluge Service" --disabled-password --group --home /var/lib/deluge deluge
+
+if [ ! -d /var/log/deluge ]; then
+	mkdir /var/log/deluge
+	chown deluge.deluge /var/log/deluge
+fi
+
+# Add to the deluge group any users you wish to be able to easily manage or access files downloaded through Deluge, for example: 
+# sudo adduser <username> deluge
+#/etc/init.d/deluge-daemon stop 
+#rm /etc/init.d/deluge-daemon
+#update-rc.d deluge-daemon remove
+
+#stop deluged
+#stop deluge-web
+#rm /etc/init/deluge-web.conf
+#rm /etc/init/deluged.conf
+
+rm -f /etc/init.d/deluged
+
+#service deluge-web restart

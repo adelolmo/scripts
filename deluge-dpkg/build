@@ -1,0 +1,29 @@
+#!/bin/bash
+
+set -e
+
+# Make sure only root can run our script
+if [ "$(id -u)" != "0" ]; then
+   echo "This script must be run as root." 1>&2
+   exit 1
+fi
+
+TMP=/tmp/dpkg-release
+version=$(cat VERSION)
+size=$(du -csh package/ | sed '1!d' | grep -oe "^[0-9]*")
+
+echo "Building version $version..."
+
+setup(){
+	rm -Rf $TMP
+	mkdir -p /tmp/release
+	mkdir -p $TMP
+	cp -R package/* $TMP
+	sed 's/\[\[version\]\]/'${version}'/g;s/\[\[size\]\]/'${size}'/g' package/DEBIAN/control > $TMP/DEBIAN/control
+	chown root:root -R $TMP
+}
+
+setup
+dpkg-deb -b -z9 $TMP /tmp/release
+
+echo done

@@ -1,0 +1,9 @@
+Package: delugew
+Version: [[version]]
+Priority: standard
+Section: misc
+Architecture: all
+Depends: deluged, deluge-webui
+Maintainer: Andoni del Olmo <andoni.delolmo@gmail.com>
+Installed-Size: [[size]]
+Description: Deluge Web & Daemon.
