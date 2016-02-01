@@ -1,7 +1,9 @@
 #!/bin/bash
 
+DELUGE_HOME=/home/deluge
+
 # http://dev.deluge-torrent.org/wiki/UserGuide/Service/systemd
-adduser --system --gecos "Deluge Service" --disabled-password --group --home /home/deluge deluge
+adduser --system --gecos "Deluge Service" --disabled-password --group --home $DELUGE_HOME deluge
 #adduser --system  --gecos "Deluge Service" --disabled-password --group --home /var/lib/deluge deluge
 
 if [ ! -d /var/log/deluge ]; then
@@ -23,3 +25,36 @@ fi
 rm -f /etc/init.d/deluged
 
 #service deluge-web restart
+
+mkdir $DELUGE_HOME/incoming $DELUGE_HOME/torrents $DELUGE_HOME/torrents_add $DELUGE_HOME/temp
+mkdir -p $DELUGE_HOME/.config/deluge
+
+echo "Creating deluge web configuration \`$DELUGE_HOME/.config/deluge/web.conf' ..."
+cat > $DELUGE_HOME/.config/deluge/web.conf <<EOF
+{
+  "file": 1, 
+  "format": 1
+}{
+  "sidebar_show_zero": false, 
+  "show_session_speed": false, 
+  "pwd_sha1": "2ce1a410bcdcc53064129b6d950f2e9fee4edc1e", 
+  "show_sidebar": true
+  "enabled_plugins": [], 
+  "base": "/", 
+  "first_login": false, 
+  "theme": "gray", 
+  "pkey": "ssl/daemon.pkey", 
+  "cert": "ssl/daemon.cert", 
+  "session_timeout": 3600, 
+  "https": false, 
+  "default_daemon": "localhost:58846", 
+  "sidebar_multiple_filters": true, 
+  "pwd_salt": "c26ab3bbd8b137f99cd83c2c1c0963bcc1a35cad", 
+  "port": 9092
+}
+EOF
+chown deluge.deluge -R $DELUGE_HOME
+chmod 640 $DELUGE_HOME/.config/deluge/web.conf
+
+echo "Starting deluge service ..."
+service deluge start
