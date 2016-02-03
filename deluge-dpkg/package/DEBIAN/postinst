@@ -2,30 +2,17 @@
 
 DELUGE_HOME=/home/deluge
 DELUGE_LOG_DIR=/var/log/deluge
+DELUGE_PORT=9092
 
 # http://dev.deluge-torrent.org/wiki/UserGuide/Service/systemd
 adduser --system --gecos "Deluge Service" --disabled-password --group --home $DELUGE_HOME deluge
-#adduser --system  --gecos "Deluge Service" --disabled-password --group --home /var/lib/deluge deluge
 
 if [ ! -d $DELUGE_LOG_DIR ]; then
 	mkdir $DELUGE_LOG_DIR
 	chown deluge.deluge $DELUGE_LOG_DIR
 fi
 
-# Add to the deluge group any users you wish to be able to easily manage or access files downloaded through Deluge, for example: 
-# sudo adduser <username> deluge
-#/etc/init.d/deluge-daemon stop 
-#rm /etc/init.d/deluge-daemon
-#update-rc.d deluge-daemon remove
-
-#stop deluged
-#stop deluge-web
-#rm /etc/init/deluge-web.conf
-#rm /etc/init/deluged.conf
-
 rm -f /etc/init.d/deluged
-
-#service deluge-web restart
 
 mkdir $DELUGE_HOME/incoming $DELUGE_HOME/torrents $DELUGE_HOME/torrents_add $DELUGE_HOME/temp
 mkdir -p $DELUGE_HOME/.config/deluge
@@ -51,10 +38,10 @@ cat > $DELUGE_HOME/.config/deluge/web.conf <<EOF
   "default_daemon": "localhost:58846", 
   "sidebar_multiple_filters": true, 
   "pwd_salt": "dc78fc761bedd4c73273d20d7bdd166c0606f745", 
-  "port": 9092
+  "port": $DELUGE_PORT
 }
 EOF
-echo "Creating deluge core configuration \`$DELUGE_HOME/.config/deluge/web.conf' ..."
+echo "Creating deluge core configuration \`$DELUGE_HOME/.config/deluge/core.conf' ..."
 cat > $DELUGE_HOME/.config/deluge/core.conf <<EOF
 {
   "file": 1,
@@ -65,20 +52,20 @@ cat > $DELUGE_HOME/.config/deluge/core.conf <<EOF
   "max_download_speed": -1.0,
   "send_info": false,
   "natpmp": true,
-  "move_completed_path": "/home/deluge/incoming",
+  "move_completed_path": "$DELUGE_HOME/incoming",
   "peer_tos": "0x00",
   "enc_in_policy": 1,
   "queue_new_to_top": false,
   "ignore_limits_on_local_network": true,
   "rate_limit_ip_overhead": true,
   "daemon_port": 58846,
-  "torrentfiles_location": "/home/deluge/torrents",
+  "torrentfiles_location": "$DELUGE_HOME/torrents",
   "max_active_limit": 8,
   "geoip_db_location": "/usr/share/GeoIP/GeoIP.dat",
   "upnp": true,
   "utpex": true,
-  "max_active_downloading": 3,
-  "max_active_seeding": 5,
+  "max_active_downloading": 10,
+  "max_active_seeding": 4,
   "allow_remote": false,
   "outgoing_ports": [
     0,
@@ -86,16 +73,16 @@ cat > $DELUGE_HOME/.config/deluge/core.conf <<EOF
   ],
   "enabled_plugins": [],
   "max_half_open_connections": 50,
-  "download_location": "/home/deluge/temp",
+  "download_location": "$DELUGE_HOME/temp",
   "compact_allocation": false,
   "max_upload_speed": -1.0,
-  "plugins_location": "/home/deluge/.config/deluge/plugins",
+  "plugins_location": "$DELUGE_HOME/.config/deluge/plugins",
   "max_connections_global": 200,
   "enc_prefer_rc4": true,
   "cache_expiry": 60,
   "dht": true,
-  "stop_seed_at_ratio": false,
-  "stop_seed_ratio": 2.0,
+  "stop_seed_at_ratio": true,
+  "stop_seed_ratio": 4.0,
   "max_download_speed_per_torrent": -1,
   "prioritize_first_last_pieces": false,
   "max_upload_speed_per_torrent": -1,
@@ -149,11 +136,11 @@ cat > $DELUGE_HOME/.config/deluge/core.conf <<EOF
   "enc_out_policy": 1,
   "seed_time_ratio_limit": 7.0,
   "remove_seed_at_ratio": false,
-  "autoadd_location": "/home/deluge/torrents_add",
+  "autoadd_location": "$DELUGE_HOME/torrents_add",
   "max_upload_slots_global": 4,
   "seed_time_limit": 180,
   "cache_size": 512,
-  "share_ratio_limit": 2.0,
+  "share_ratio_limit": 4.0,
   "random_port": true,
   "listen_interface": ""
 }
@@ -163,8 +150,7 @@ EOF
 #localclient:6d755a77a297a6d3fd32ad44fc5f24ffd811f88d:10
 #EOF
 chown deluge.deluge -R $DELUGE_HOME
-chmod 640 $DELUGE_HOME/.config/deluge/web.conf
 
-echo "Starting deluge service ..."
+echo "Starting deluge service on port $DELUGE_PORT ..."
 service deluge start
 echo "Deluge logs are located in \`$DELUGE_LOG_DIR'."
