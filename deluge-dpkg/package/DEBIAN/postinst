@@ -3,6 +3,7 @@
 DELUGE_HOME=/home/deluge
 DELUGE_LOG_DIR=/var/log/deluge
 DELUGE_PORT=9092
+HTTPS_ENABLE=true
 
 # http://dev.deluge-torrent.org/wiki/UserGuide/Service/systemd
 adduser --system --gecos "Deluge Service" --disabled-password --group --home $DELUGE_HOME deluge
@@ -34,7 +35,7 @@ cat > $DELUGE_HOME/.config/deluge/web.conf <<EOF
   "pkey": "ssl/daemon.pkey", 
   "cert": "ssl/daemon.cert", 
   "session_timeout": 3600, 
-  "https": true, 
+  "https": $HTTPS_ENABLE, 
   "default_daemon": "localhost:58846", 
   "sidebar_multiple_filters": true, 
   "pwd_salt": "dc78fc761bedd4c73273d20d7bdd166c0606f745", 
@@ -151,6 +152,10 @@ EOF
 #EOF
 chown deluge.deluge -R $DELUGE_HOME
 
-echo "Starting deluge service on port $DELUGE_PORT ..."
+if [ "$HTTPS_ENABLE" == "true" ]; then
+	echo "Starting deluge service on \`https://localhost:$DELUGE_PORT' ..."
+else 
+	echo "Starting deluge service on \`http://localhost:$DELUGE_PORT' ..."
+fi
 service deluge start
 echo "Deluge logs are located in \`$DELUGE_LOG_DIR'."
