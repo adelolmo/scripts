@@ -146,10 +146,21 @@ cat > $DELUGE_HOME/.config/deluge/core.conf <<EOF
   "listen_interface": ""
 }
 EOF
-#echo "Replace deluge web default password."
-#cat > $DELUGE_HOME/.config/deluge/auth <<EOF
-#localclient:6d755a77a297a6d3fd32ad44fc5f24ffd811f88d:10
-#EOF
+echo "Add keepalive script in $DELUGE_HOME."
+cat > $DELUGE_HOME/keepalive <<EOF
+#!/bin/bash
+
+process=deluged
+makerun="service deluge start"
+
+if ps ax | grep -v grep | grep $process > /dev/null; then
+        exit
+else
+        logger "Start deluge service."
+        exec \$makerun
+fi            
+EOF
+chmod u+x $DELUGE_HOME/keepalive
 chown deluge.deluge -R $DELUGE_HOME
 
 if [ "$HTTPS_ENABLE" == "true" ]; then
