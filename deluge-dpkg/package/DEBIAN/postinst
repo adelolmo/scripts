@@ -153,7 +153,7 @@ cat > $DELUGE_HOME/keepalive <<EOF
 process=deluged
 makerun="service deluge start"
 
-if ps ax | grep -v grep | grep $process > /dev/null; then
+if ps ax | grep -v grep | grep \$process > /dev/null; then
         exit
 else
         logger "Start deluge service."
