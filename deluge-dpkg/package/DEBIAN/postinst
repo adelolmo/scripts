@@ -6,7 +6,8 @@ DELUGE_PORT=9092
 HTTPS_ENABLE=true
 
 # http://dev.deluge-torrent.org/wiki/UserGuide/Service/systemd
-adduser --system --gecos "Deluge Service" --disabled-password --group --home $DELUGE_HOME deluge
+echo "Creating \`deluge' user with home directory \`$DELUGE_HOME' ..."
+adduser --system --gecos "Deluge Service" --disabled-password --group --home $DELUGE_HOME deluge > /dev/null 2>&1
 
 if [ ! -d $DELUGE_LOG_DIR ]; then
 	mkdir $DELUGE_LOG_DIR
@@ -16,7 +17,10 @@ fi
 rm -f /etc/init.d/deluged
 
 mkdir $DELUGE_HOME/incoming $DELUGE_HOME/torrents $DELUGE_HOME/torrents_add $DELUGE_HOME/temp
-mkdir -p $DELUGE_HOME/.config/deluge
+mkdir -p $DELUGE_HOME/.config/deluge/ssl
+echo "Creating SSL Certificate ..."
+openssl req -new -x509 -nodes -out $DELUGE_HOME/.config/deluge/ssl/deluge.cert -keyout $DELUGE_HOME/.config/deluge/ssl/deluge.pkey -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=example.com" > /dev/null 2>&1
+chmod 600 $DELUGE_HOME/.config/deluge/ssl/deluge.*
 
 echo "Creating deluge web configuration \`$DELUGE_HOME/.config/deluge/web.conf' ..."
 cat > $DELUGE_HOME/.config/deluge/web.conf <<EOF
@@ -32,8 +36,8 @@ cat > $DELUGE_HOME/.config/deluge/web.conf <<EOF
   "base": "/", 
   "first_login": false, 
   "theme": "gray", 
-  "pkey": "ssl/daemon.pkey", 
-  "cert": "ssl/daemon.cert", 
+  "pkey": "ssl/deluge.pkey", 
+  "cert": "ssl/deluge.cert", 
   "session_timeout": 3600, 
   "https": $HTTPS_ENABLE, 
   "default_daemon": "localhost:58846", 
@@ -146,7 +150,7 @@ cat > $DELUGE_HOME/.config/deluge/core.conf <<EOF
   "listen_interface": ""
 }
 EOF
-echo "Add keepalive script in $DELUGE_HOME."
+echo "Creating keepalive script in \`$DELUGE_HOME/keepalive' ..."
 cat > $DELUGE_HOME/keepalive <<EOF
 #!/bin/bash
 
@@ -168,5 +172,5 @@ if [ "$HTTPS_ENABLE" == "true" ]; then
 else 
 	echo "Starting deluge service on \`http://localhost:$DELUGE_PORT' ..."
 fi
-service deluge start
+service deluge start > /dev/null 2>&1
 echo "Deluge logs are located in \`$DELUGE_LOG_DIR'."
