@@ -1,0 +1,11 @@
+#!/bin/sh -e
+
+if [ -z "$1" ]; then
+	LEN=40
+else
+	LEN=$1
+fi
+
+cat /dev/urandom | head -c${1:-32} | sha256sum | base64 | head -c $LEN
+echo
+exit 0
