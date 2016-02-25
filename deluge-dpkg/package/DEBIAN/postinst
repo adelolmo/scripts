@@ -19,7 +19,7 @@ rm -f /etc/init.d/deluged
 mkdir $DELUGE_HOME/incoming $DELUGE_HOME/torrents $DELUGE_HOME/torrents_add $DELUGE_HOME/temp
 mkdir -p $DELUGE_HOME/.config/deluge/ssl
 echo "Creating SSL Certificate ..."
-openssl req -new -x509 -nodes -out $DELUGE_HOME/.config/deluge/ssl/deluge.cert -keyout $DELUGE_HOME/.config/deluge/ssl/deluge.pkey -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=example.com" > /dev/null 2>&1
+openssl req -new -x509 -nodes -days 1825 -out $DELUGE_HOME/.config/deluge/ssl/deluge.cert -keyout $DELUGE_HOME/.config/deluge/ssl/deluge.pkey -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=example.com" > /dev/null 2>&1
 chmod 600 $DELUGE_HOME/.config/deluge/ssl/deluge.*
 
 echo "Creating deluge web configuration \`$DELUGE_HOME/.config/deluge/web.conf' ..."
