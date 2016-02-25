@@ -1,6 +1,9 @@
-#!/bin/bash
+#!/bin/sh 
+
+set -e
 
 DELUGE_HOME=/home/deluge
+DELUGE_CONF_DIR=$DELUGE_HOME/.config/deluge
 DELUGE_LOG_DIR=/var/log/deluge
 DELUGE_PORT=9092
 HTTPS_ENABLE=true
@@ -17,13 +20,13 @@ fi
 rm -f /etc/init.d/deluged
 
 mkdir $DELUGE_HOME/incoming $DELUGE_HOME/torrents $DELUGE_HOME/torrents_add $DELUGE_HOME/temp
-mkdir -p $DELUGE_HOME/.config/deluge/ssl
+mkdir -p $DELUGE_CONF_DIR/ssl
 echo "Creating SSL Certificate ..."
-openssl req -new -x509 -nodes -days 1825 -out $DELUGE_HOME/.config/deluge/ssl/deluge.cert -keyout $DELUGE_HOME/.config/deluge/ssl/deluge.pkey -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=example.com" > /dev/null 2>&1
-chmod 600 $DELUGE_HOME/.config/deluge/ssl/deluge.*
+openssl req -new -x509 -nodes -days 1825 -out $DELUGE_CONF_DIR/ssl/deluge.cert -keyout $DELUGE_CONF_DIR/ssl/deluge.pkey -subj "/C=US/ST=Denial/L=Springfield/O=Dis/CN=example.com" > /dev/null 2>&1
+chmod 600 $DELUGE_CONF_DIR/ssl/deluge.*
 
-echo "Creating deluge web configuration \`$DELUGE_HOME/.config/deluge/web.conf' ..."
-cat > $DELUGE_HOME/.config/deluge/web.conf <<EOF
+echo "Creating deluge web configuration \`$DELUGE_CONF_DIR/web.conf' ..."
+cat > $DELUGE_CONF_DIR/web.conf <<EOF
 {
   "file": 1, 
   "format": 1
@@ -46,8 +49,8 @@ cat > $DELUGE_HOME/.config/deluge/web.conf <<EOF
   "port": $DELUGE_PORT
 }
 EOF
-echo "Creating deluge core configuration \`$DELUGE_HOME/.config/deluge/core.conf' ..."
-cat > $DELUGE_HOME/.config/deluge/core.conf <<EOF
+echo "Creating deluge core configuration \`$DELUGE_CONF_DIR/core.conf' ..."
+cat > $DELUGE_CONF_DIR/core.conf <<EOF
 {
   "file": 1,
   "format": 1
@@ -81,7 +84,7 @@ cat > $DELUGE_HOME/.config/deluge/core.conf <<EOF
   "download_location": "$DELUGE_HOME/temp",
   "compact_allocation": false,
   "max_upload_speed": -1.0,
-  "plugins_location": "$DELUGE_HOME/.config/deluge/plugins",
+  "plugins_location": "$DELUGE_CONF_DIR/plugins",
   "max_connections_global": 200,
   "enc_prefer_rc4": true,
   "cache_expiry": 60,
@@ -167,7 +170,7 @@ EOF
 chmod u+x $DELUGE_HOME/keepalive
 chown deluge.deluge -R $DELUGE_HOME
 
-if [ "$HTTPS_ENABLE" == "true" ]; then
+if [ "$HTTPS_ENABLE" = 'true' ]; then
 	echo "Starting deluge service on \`https://localhost:$DELUGE_PORT' ..."
 else 
 	echo "Starting deluge service on \`http://localhost:$DELUGE_PORT' ..."
