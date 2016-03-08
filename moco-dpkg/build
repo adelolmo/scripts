@@ -1,12 +1,6 @@
-#!/bin/bash
+#!/bin/sh
 
 set -e
-
-# Make sure only root can run our script
-if [ "$(id -u)" != "0" ]; then
-   echo "This script must be run as root." 1>&2
-   exit 1
-fi
 
 TMP=/tmp/dpkg-build
 version=$(cat VERSION)
@@ -20,10 +14,9 @@ setup(){
 	mkdir -p $TMP
 	cp -R package/* $TMP
 	sed 's/\[\[version\]\]/'${version}'/g;s/\[\[size\]\]/'${size}'/g' package/DEBIAN/control > $TMP/DEBIAN/control
-	chown root:root -R $TMP
 }
 
 setup
-dpkg-deb -b -z9 $TMP /tmp/release
+fakeroot dpkg-deb --build -z9 $TMP /tmp/release
 
 echo done
