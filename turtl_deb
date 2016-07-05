@@ -1,0 +1,41 @@
+#!/bin/sh
+
+TMP=/tmp/turtldeb
+TMP_DEB=$TMP/deb
+
+rm -fr $TMP
+mkdir -p $TMP_DEB
+
+cd /tmp
+
+[ -f /tmp/turtl-linux64-0.6.4.tar.bz2 ] || wget https://turtl.it/releases/desktop/turtl-linux64-0.6.4.tar.bz2
+tar xvf /tmp/turtl-linux64-0.6.4.tar.bz2 -C /tmp/turtldeb > /dev/null 2>&1
+
+mkdir -p $TMP_DEB/usr/share/turtl
+cp -R $TMP/turtl-linux64/turtl/* $TMP_DEB/usr/share/turtl
+chmod +x $TMP_DEB/usr/share/turtl/turtl-bin $TMP_DEB/usr/share/turtl/chromedriver $TMP_DEB/usr/share/turtl/nacl* $TMP_DEB/usr/share/turtl/nwjc $TMP_DEB/usr/share/turtl/payload
+chmod -R +xr $TMP_DEB/usr/share/turtl/locales $TMP_DEB/usr/share/turtl/lib $TMP_DEB/usr/share/turtl/pnacl
+chmod -R o+r $TMP_DEB/usr/share/turtl/*
+
+mkdir -p $TMP_DEB/usr/share/applications
+cat > $TMP_DEB/usr/share/applications/turtl.desktop <<EOF
+[Desktop Entry]
+Name=Turtl
+GenericName=Secture notes
+Comment=Private notes and bookmarks with collaboration.
+Exec=/usr/share/turtl/turtl-bin
+Icon=turtl
+Type=Application
+Terminal=false
+Categories=Office;Utility;
+Keywords=secure;security;privacy;private;notes;bookmarks;collaborate;research;
+StartupNotify=true
+EOF
+
+#chmod g-w $TMP_DEB/usr/share/applications/turtl.desktop
+mkdir -p $TMP_DEB/usr/share/pixmaps
+mv $TMP_DEB/usr/share/turtl/icon.png $TMP_DEB/usr/share/turtl/turtl.png
+cp $TMP_DEB/usr/share/turtl/turtl.png $TMP_DEB/usr/share/pixmaps/
+
+cd $TMP
+fpm -s dir -t deb -n turtl -v 0.6.4 deb/=/
