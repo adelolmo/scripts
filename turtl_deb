@@ -1,5 +1,6 @@
 #!/bin/sh
 
+VERSION=0.6.4
 TMP=/tmp/turtldeb
 TMP_DEB=$TMP/deb
 
@@ -8,8 +9,8 @@ mkdir -p $TMP_DEB
 
 cd /tmp
 
-[ -f /tmp/turtl-linux64-0.6.4.tar.bz2 ] || wget https://turtl.it/releases/desktop/turtl-linux64-0.6.4.tar.bz2
-tar xvf /tmp/turtl-linux64-0.6.4.tar.bz2 -C /tmp/turtldeb > /dev/null 2>&1
+[ -f /tmp/turtl-linux64-$VERSION.tar.bz2 ] || wget https://turtl.it/releases/desktop/turtl-linux64-$VERSION.tar.bz2
+tar xvf /tmp/turtl-linux64-$VERSION.tar.bz2 -C /tmp/turtldeb > /dev/null 2>&1
 
 mkdir -p $TMP_DEB/usr/share/turtl
 cp -R $TMP/turtl-linux64/turtl/* $TMP_DEB/usr/share/turtl
@@ -23,7 +24,7 @@ cat > $TMP_DEB/usr/share/applications/turtl.desktop <<EOF
 Name=Turtl
 GenericName=Secture notes
 Comment=Private notes and bookmarks with collaboration.
-Exec=/usr/share/turtl/turtl-bin
+Exec=/usr/share/turtl/turtl
 Icon=turtl
 Type=Application
 Terminal=false
@@ -38,4 +39,4 @@ mv $TMP_DEB/usr/share/turtl/icon.png $TMP_DEB/usr/share/turtl/turtl.png
 cp $TMP_DEB/usr/share/turtl/turtl.png $TMP_DEB/usr/share/pixmaps/
 
 cd $TMP
-fpm -s dir -t deb -n turtl -v 0.6.4 deb/=/
+fpm -s dir -t deb -n turtl -v $VERSION deb/=/
