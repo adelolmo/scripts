@@ -33,10 +33,9 @@ Keywords=secure;security;privacy;private;notes;bookmarks;collaborate;research;
 StartupNotify=true
 EOF
 
-#chmod g-w $TMP_DEB/usr/share/applications/turtl.desktop
 mkdir -p $TMP_DEB/usr/share/pixmaps
 mv $TMP_DEB/usr/share/turtl/icon.png $TMP_DEB/usr/share/turtl/turtl.png
 cp $TMP_DEB/usr/share/turtl/turtl.png $TMP_DEB/usr/share/pixmaps/
 
 cd $TMP
-fpm -s dir -t deb -n turtl -v $VERSION deb/=/
+fpm -s dir -t deb -n turtl -v $VERSION --license GPLv3 --vendor info@turtl.it --maintainer info@turtl.it --url https://turtl.it --description "Private notes and bookmarks with collaboration." deb/=/
