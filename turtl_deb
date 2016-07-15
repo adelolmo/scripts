@@ -43,14 +43,14 @@ Exec=/usr/share/turtl/turtl
 Icon=turtl
 Type=Application
 Terminal=false
-Categories=Office;Utility;
+Categories=Network;Application;
 Keywords=secure;security;privacy;private;notes;bookmarks;collaborate;research;
 StartupNotify=true
 EOF
 
 echo Creating debian package ...
 cd $TMP
-fpm -s dir -t deb -n turtl -v $VERSION --license GPLv3 --vendor info@turtl.it --maintainer info@turtl.it --url https://turtl.it --description "Private notes and bookmarks with collaboration." deb/=/
+fpm -s dir -t deb -n turtl -v $VERSION --license GPLv3 --vendor "Lyon Bros. Enterprises, LLC" --maintainer info@turtl.it --url https://turtl.it --description "Private notes and bookmarks with collaboration." deb/=/
 
 echo
 echo Package created in $TMP
