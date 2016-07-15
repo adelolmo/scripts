@@ -3,6 +3,9 @@
 set -e
 
 VERSION=0.6.4
+
+[ $(which fpm) ] || echo "Install fpm first. https://github.com/jordansissel/fpm/wiki"
+
 TMP=/tmp/turtldeb
 TMP_DEB=$TMP/deb
 
@@ -50,7 +53,7 @@ EOF
 
 echo Creating debian package ...
 cd $TMP
-fpm -s dir -t deb -n turtl -v $VERSION --license GPLv3 --vendor "Lyon Bros. Enterprises, LLC" --maintainer info@turtl.it --url https://turtl.it --description "Private notes and bookmarks with collaboration." deb/=/
+$(which fpm) -s dir -t deb -n turtl -v $VERSION --license GPLv3 --vendor "Lyon Bros. Enterprises, LLC" --maintainer info@turtl.it --url https://turtl.it --description "Private notes and bookmarks with collaboration." deb/=/
 
 echo
 echo Package created in $TMP
