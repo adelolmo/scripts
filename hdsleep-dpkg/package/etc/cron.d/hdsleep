@@ -1,3 +1,0 @@
-# Run hdsleep every minute
-*/10 *	* * *	root 	/usr/bin/hdsleep/hdsleep
-* * 	* * *	root	/usr/bin/hdsleep/remlock
