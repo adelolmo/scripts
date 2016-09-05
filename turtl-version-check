@@ -9,7 +9,7 @@ version=$( wget https://turtlapp.com -O turtlhome > /dev/null 2>&1 && cat turtlh
 if [ -f $VERSION_FILE ]; then
 	if [ "$(cat $VERSION_FILE)" != "$version" ]; then
 		echo $version > $VERSION_FILE
-		curl -H "Content-Type: application/json" -X POST -d '{"recipient":"andoni.delolmo@gmail.com","subject":"Turtl new version '"$version"'","message":"Turtl has released the version '"$version"'. https://turtl.it/download/"}' http://localhost:8080/mails
+		curl -H "Content-Type: application/json" -X POST -d '{"recipient":"andoni.delolmo@gmail.com","subject":"Turtl new version '"$version"'","message":"Turtl has released the version '"$version"'. https://turtlapp.com/download/"}' http://localhost:8080/mails
 	fi
 else
 	echo $version > $VERSION_FILE
