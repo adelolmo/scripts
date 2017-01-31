@@ -1,0 +1,16 @@
+#!/bin/sh
+
+find -name "*.iso" | sort |
+while read isofile
+do
+	csofile=${isofile%\.*}.cso
+    echo $csofile ...
+
+	if [ ! -f "$csofile" ]; then
+		echo Compressing $isofile ...
+		ciso 9 "$isofile" "$csofile"
+		echo .	
+	fi
+	rm "$isofile"
+done
+echo done

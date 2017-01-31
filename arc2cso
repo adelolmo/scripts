@@ -1,0 +1,18 @@
+#!/bin/sh
+
+find -name "*.arc" | sort |
+while read arcfile
+do
+	isofile=${arcfile%\.*}.iso
+	csofile=${arcfile%\.*}.cso
+
+	if [ ! -f "$csofile" ]; then
+		echo Extracting $arcfile ...
+		unarc x -o+ "$arcfile"
+		echo Compressing $isofile ...
+		ciso 9 "$isofile" "$csofile"
+		rm "$isofile"
+		echo .
+	fi
+done
+echo done
