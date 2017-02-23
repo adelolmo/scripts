@@ -1,8 +1,8 @@
 #!/bin/sh
 
-ip=$(wget http://ipecho.net/plain -O - -q ; echo)
-csv=$(curl -s freegeoip.net/csv/${ip})
+csv=$(curl -s freegeoip.net/csv/)
 
+ip=$(echo ${csv}| cut -d "," -f 1)
 country=$(echo ${csv}| cut -d "," -f 2)
 state=$(echo ${csv}| cut -d "," -f 4)
 city=$(echo ${csv}| cut -d "," -f 6)
