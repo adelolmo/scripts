@@ -1,0 +1,15 @@
+#!/bin/sh
+
+TMP=/tmp/apk2src
+
+apkfile=$1
+
+rm -rf $TMP
+mkdir $TMP
+apkfilename=$(basename $apkfile)
+cp $apkfile $TMP/$apkfilename.zip
+
+unzip $TMP/$apkfilename.zip -d $TMP
+rm $TMP/$apkfilename.zip
+
+/usr/bin/dex2jar $TMP/classes.dex --output $TMP/classes.jar
