@@ -7,8 +7,7 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 # Install dependencies
-apt-get install reprepro -y
-apt-get install apache2 -y
+apt-get install -y reprepro apache2
 
 # Prepare directory structure
 mkdir -p /var/www/html/apt/conf
