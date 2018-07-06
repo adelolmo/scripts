@@ -1,0 +1,23 @@
+#!/bin/sh
+
+apkfile=$1
+output=$2
+
+usage(){
+    echo "Usage: $(basename $0) apk output_dir"
+    exit 1
+}
+
+if [ -z "$1" ] || [ -z "$2" ]; then
+    usage
+fi
+
+rm -rf $output
+mkdir $output
+apkfilename=$(basename $apkfile)
+cp $apkfile $output/$apkfilename.zip
+
+unzip $output/$apkfilename.zip -d $output
+rm $output/$apkfilename.zip
+
+/usr/bin/dex2jar $output/classes.dex --output $output/classes.jar
